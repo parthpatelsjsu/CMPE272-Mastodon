@@ -12,6 +12,8 @@ interface Post {
 
 function App() {
   const [posts, setPosts] = useState<Post[]>([]);
+
+  console.log("Shailen's first commit");
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-5">
       <h1 className="text-4xl font-semibold text-center text-blue-600 mb-8">
