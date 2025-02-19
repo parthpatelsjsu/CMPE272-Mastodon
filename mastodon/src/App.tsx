@@ -39,13 +39,41 @@ function App() {
       const post = await response.json();
       setPostList([...postList, post]);
       setPostStatus(`Post created successfully! ID: ${post.id}`);
-      // fetchAllPosts();
+      fetchAllPosts();
     } else {
       setPostStatus(`Error creating post: ${response.status}`);
     }
 
     setPostContent(""); // Clear input
   };
+
+  // Function to fetch all public posts
+  const fetchAllPosts = async () => {
+    const response = await fetch(
+      `${MASTODON_INSTANCE}/api/v1/accounts/114027501803173344/statuses`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const posts = await response.json();
+      console.log(posts);
+      setPostList(posts); // Store the posts in state
+      // setStatus("Fetched latest public posts!");
+      console.log("Get all posts successful");
+    } else {
+      // setStatus(`Error fetching posts: ${response.status}`);
+      console.log("Error getting all posts");
+      console.log(response.status);
+      console.log(response.text);
+      setPostList([]);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-5">
       <h1 className="text-4xl font-semibold text-center text-blue-600 mb-8">
