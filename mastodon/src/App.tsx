@@ -11,9 +11,41 @@ interface Post {
 }
 
 function App() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [postContent, setPostContent] = useState<string>(""); // stores the context of post
+  const [deletePostId, setDeletePostId] = useState<string>(""); // stores the post id that needs to be deleted
+  const [getPostId, setGetPostId] = useState<string>(""); // stores the post id that needs to be fetched
+  const [postStatus, setPostStatus] = useState<string>(""); // if error during POST, store error here
+  const [getPostStatus, setGetPostStatus] = useState<string>(""); // if error during GET, store error here
+  const [getDelStatus, setDelPostStatus] = useState<string>(""); // if error during DELETE, store error here
+  const [postList, setPostList] = useState<Post[]>([]); // stores ALL posts we created
+  const [fetchPost, setFetchPost] = useState<Post>();
 
-  console.log("Shailen's first commit");
+  const createPost = async () => {
+    if (!postContent.trim()) {
+      setPostStatus("Post content cannot be empty.");
+      return;
+    }
+
+    const response = await fetch(`${MASTODON_INSTANCE}/api/v1/statuses`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status: postContent.trim() }),
+    });
+
+    if (response.ok) {
+      const post = await response.json();
+      setPostList([...postList, post]);
+      setPostStatus(`Post created successfully! ID: ${post.id}`);
+      // fetchAllPosts();
+    } else {
+      setPostStatus(`Error creating post: ${response.status}`);
+    }
+
+    setPostContent(""); // Clear input
+  };
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-5">
       <h1 className="text-4xl font-semibold text-center text-blue-600 mb-8">
@@ -70,7 +102,7 @@ function App() {
           Fetch All Posts
         </button>
         <div className="space-y-4">
-          {posts.map((post) => (
+          {postList.map((post) => (
             <div
               key={post.id}
               className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm"
