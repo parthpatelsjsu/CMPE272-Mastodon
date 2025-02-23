@@ -86,6 +86,7 @@ function App() {
     setIsDeleteModalOpen(true);
   };
 
+  // Handles the actual deletion after user confirmation
   const handleConfirmDelete = async () => {
     const response = await fetch(
       `${MASTODON_INSTANCE}/api/v1/statuses/${pendingDeleteId}`,
