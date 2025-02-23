@@ -70,7 +70,38 @@ function App() {
 
   // Function to fetch post by ID
   const fetchPostById = async () => {
-    // ***TO BE IMPLEMENTED***
+    // Check if the post ID is empty
+    if(!getPostId.trim()) {
+      setGetPostStatus({ message: "Post ID cannot be empty", failure: true });
+      setFetchPost({ id: -1, content: "Please enter a valid Post ID", created_at: "" });
+      fetchPost && setFetchPost(undefined);
+      return;
+    }
+    // Making a GET request to fetch the post by ID
+    const response = await fetch(
+      `${MASTODON_INSTANCE}/api/v1/statuses/${getPostId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+    const fetchedPost = await response.json();
+    
+    // Checking if the API request was successful
+    if (response.ok) {
+      console.log(`Get post by Id successful ID:${fetchedPost.id}`);
+      setGetPostStatus({ message: `Get Post by ID Succeeded ID:${fetchedPost.id}`, failure: false });
+      setFetchPost(fetchedPost);
+    } else {
+      console.log("Error getting post by Id");
+      console.log(response.status);
+      console.log(response.text);
+      setGetPostStatus({ message: "Get Post by ID failed", failure: true });
+      setFetchPost({ id: -1, content: fetchedPost.error, created_at: "" });
+    }
+
   };
 
   const deletePostById = async () => {
@@ -129,9 +160,8 @@ function App() {
 
         {postStatus && (
           <h2
-            className={`text-md text-blue font-bold  mt-4 ${
-              postStatus.failure ? "text-red-500" : "text-green-500"
-            }`}
+            className={`text-md text-blue font-bold  mt-4 ${postStatus.failure ? "text-red-500" : "text-green-500"
+              }`}
           >
             {postStatus.message}
           </h2>
