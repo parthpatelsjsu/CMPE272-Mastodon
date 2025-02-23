@@ -92,16 +92,15 @@ function App() {
     // Checking if the API request was successful
     if (response.ok) {
       console.log(`Get post by Id successful ID:${fetchedPost.id}`);
-      setGetPostStatus({ message: `Get Post by ID Succeeded ID:${fetchedPost.id}`, failure: false });
+      setGetPostStatus({ message: `Get Post by ID Succeeded ID:${fetchedPost.id}`, failure: false});
       setFetchPost(fetchedPost);
     } else {
       console.log("Error getting post by Id");
       console.log(response.status);
       console.log(response.text);
-      setGetPostStatus({ message: "Get Post by ID failed", failure: true });
-      setFetchPost({ id: -1, content: fetchedPost.error, created_at: "" });
+      setGetPostStatus({ message: `Get Post by ID failed ${fetchedPost.error}`, failure: true });
+      setFetchPost({ id: -1, content: fetchedPost.error, created_at: ""});
     }
-
   };
 
   const deletePostById = async () => {
