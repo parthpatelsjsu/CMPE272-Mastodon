@@ -53,6 +53,10 @@ function App() {
       body: JSON.stringify({ status: postContent.trim() }),
     });
 
+    if (!response.ok) {
+      throw new Error("Failed to create post");
+    }
+
     if (response.ok) {
       const post = await response.json();
       setPostList([...postList, post]);
