@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { Modal } from './components/Modal';
 
-// Hide the token before making repo public and submitting
-const MASTODON_INSTANCE = "https://mstdn.plus";
-const ACCESS_TOKEN = "opl1nHQury42r7IBvXWNZbnxwxGCPAxkWP4ofwT7jcg";
+// Moved to .env file
+const MASTODON_INSTANCE = import.meta.env.VITE_MASTODON_INSTANCE;
+const ACCESS_TOKEN = import.meta.env.VITE_ACCESS_TOKEN;
 
 interface Post {
   id: number;
@@ -30,6 +31,8 @@ function App() {
   const [getDelStatus, setDelPostStatus] = useState<Status>(); // if error during DELETE, store error here
   const [postList, setPostList] = useState<Post[]>([]); // stores ALL posts we created
   const [fetchPost, setFetchPost] = useState<Post | null>();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string>("");
 
   useEffect(() => {
     fetchAllPosts(); // Fetch all posts that exist so they can be displayed
@@ -104,8 +107,42 @@ function App() {
     }
   };
 
-  const deletePostById = async () => {
-    // ***TO BE IMPLEMENTED***
+  // Function to delete post by ID
+  const handleDeleteClick = () => {
+    if (!deletePostId.trim()) {
+      setDelPostStatus({ message: "Post ID cannot be empty", failure: true });
+      return;
+    }
+    setPendingDeleteId(deletePostId);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Handles the actual deletion after user confirmation
+  const handleConfirmDelete = async () => {
+    const response = await fetch(
+      `${MASTODON_INSTANCE}/api/v1/statuses/${pendingDeleteId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+
+    if (response.ok) {
+      setDelPostStatus({
+        message: `Post deleted successfully! ID: ${pendingDeleteId}`,
+        failure: false,
+      });
+      setPostList(postList.filter((post) => post.id.toString() !== pendingDeleteId));
+      setDeletePostId(""); // Clear input
+    } else {
+      setDelPostStatus({
+        message: `Error deleting post: ${response.status}`,
+        failure: true,
+      });
+    }
+    setIsDeleteModalOpen(false);
   };
 
   // Function to fetch all public posts
@@ -222,10 +259,19 @@ function App() {
         />
         <button
           className="w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 transition duration-300 cursor-pointer"
-          onClick={deletePostById}
+          onClick={handleDeleteClick}
         >
           Delete Post
         </button>
+        {getDelStatus && (
+          <h2
+            className={`text-md text-blue font-bold mt-4 ${
+              getDelStatus.failure ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            {getDelStatus.message}
+          </h2>
+        )}
       </div>
 
       {/* Display Posts */}
@@ -255,6 +301,18 @@ function App() {
           </div>
         )}
       </div>
+
+      {/* Confirmation Modal for Delete Post */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setDelPostStatus({ message: "Delete operation cancelled", failure: false });
+        }}
+        onConfirm={handleConfirmDelete}
+        title="Confirm Delete"
+        message="This process is irreversible. Are you sure you want to delete this post?"
+      />
     </div>
   );
 }
