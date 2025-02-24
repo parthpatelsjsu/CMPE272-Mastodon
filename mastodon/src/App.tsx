@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Modal } from './components/Modal';
+import { Modal } from "./components/Modal";
 
 // Moved to .env file
 const MASTODON_INSTANCE = import.meta.env.VITE_MASTODON_INSTANCE;
@@ -52,6 +52,10 @@ function App() {
       },
       body: JSON.stringify({ status: postContent.trim() }),
     });
+
+    if (!response.ok) {
+      throw new Error("Failed to create post");
+    }
 
     if (response.ok) {
       const post = await response.json();
@@ -134,7 +138,9 @@ function App() {
         message: `Post deleted successfully! ID: ${pendingDeleteId}`,
         failure: false,
       });
-      setPostList(postList.filter((post) => post.id.toString() !== pendingDeleteId));
+      setPostList(
+        postList.filter((post) => post.id.toString() !== pendingDeleteId)
+      );
       setDeletePostId(""); // Clear input
     } else {
       setDelPostStatus({
@@ -307,7 +313,10 @@ function App() {
         isOpen={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false);
-          setDelPostStatus({ message: "Delete operation cancelled", failure: false });
+          setDelPostStatus({
+            message: "Delete operation cancelled",
+            failure: false,
+          });
         }}
         onConfirm={handleConfirmDelete}
         title="Confirm Delete"
