@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Modal } from './components/Modal';
+import { Modal } from "./components/Modal";
 
 // Moved to .env file
 const MASTODON_INSTANCE = import.meta.env.VITE_MASTODON_INSTANCE;
@@ -134,7 +134,9 @@ function App() {
         message: `Post deleted successfully! ID: ${pendingDeleteId}`,
         failure: false,
       });
-      setPostList(postList.filter((post) => post.id.toString() !== pendingDeleteId));
+      setPostList(
+        postList.filter((post) => post.id.toString() !== pendingDeleteId)
+      );
       setDeletePostId(""); // Clear input
     } else {
       setDelPostStatus({
@@ -174,7 +176,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-5">
-      <h1 className="text-4xl font-semibold text-center text-blue-600 mb-8">
+      <h1 className="text-4xl font-semibold text-center text-purple-700 mb-8">
         {" "}
         Interact with Mastodon Posts!
       </h1>
@@ -276,7 +278,9 @@ function App() {
 
       {/* Display Posts */}
       <div className="w-full max-w-xl">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">Posts</h2>
+        <h2 className="text-2xl font-bold text-gray-700 mb-4">
+          All posts created on our Mastadon server:
+        </h2>
         {/* Removing this button since it should display dynamically
         <button className="w-full bg-teal-500 text-white py-2 rounded-md hover:bg-teal-600 transition duration-300 mb-4">
           Fetch All Posts
@@ -307,7 +311,10 @@ function App() {
         isOpen={isDeleteModalOpen}
         onClose={() => {
           setIsDeleteModalOpen(false);
-          setDelPostStatus({ message: "Delete operation cancelled", failure: false });
+          setDelPostStatus({
+            message: "Delete operation cancelled",
+            failure: false,
+          });
         }}
         onConfirm={handleConfirmDelete}
         title="Confirm Delete"
