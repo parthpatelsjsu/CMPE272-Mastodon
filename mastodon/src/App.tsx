@@ -29,7 +29,7 @@ function App() {
   const [getPostStatus, setGetPostStatus] = useState<Status>(); // if error during GET, store error here
   const [getDelStatus, setDelPostStatus] = useState<Status>(); // if error during DELETE, store error here
   const [postList, setPostList] = useState<Post[]>([]); // stores ALL posts we created
-  const [fetchPost, setFetchPost] = useState<Post>();
+  const [fetchPost, setFetchPost] = useState<Post | null>();
 
   useEffect(() => {
     fetchAllPosts(); // Fetch all posts that exist so they can be displayed
@@ -71,10 +71,9 @@ function App() {
   // Function to fetch post by ID
   const fetchPostById = async () => {
     // Check if the post ID is empty
-    if(!getPostId.trim()) {
+    if (!getPostId.trim()) {
       setGetPostStatus({ message: "Post ID cannot be empty", failure: true });
-      setFetchPost({ id: -1, content: "Please enter a valid Post ID", created_at: "" });
-      fetchPost && setFetchPost(undefined);
+      // setFetchPost({ id: -1, content: "Please enter a valid Post ID", created_at: "" });
       return;
     }
     // Making a GET request to fetch the post by ID
@@ -88,18 +87,20 @@ function App() {
       }
     );
     const fetchedPost = await response.json();
-    
+
     // Checking if the API request was successful
     if (response.ok) {
-      console.log(`Get post by Id successful ID:${fetchedPost.id}`);
-      setGetPostStatus({ message: `Get Post by ID Succeeded ID:${fetchedPost.id}`, failure: false});
+      setGetPostStatus({
+        message: `Post fetched successfully!`,
+        failure: false,
+      });
       setFetchPost(fetchedPost);
     } else {
-      console.log("Error getting post by Id");
-      console.log(response.status);
-      console.log(response.text);
-      setGetPostStatus({ message: `Get Post by ID failed ${fetchedPost.error}`, failure: true });
-      setFetchPost({ id: -1, content: fetchedPost.error, created_at: ""});
+      setGetPostStatus({
+        message: `Get Post by ID failed ${fetchedPost.error}`,
+        failure: true,
+      });
+      setFetchPost(null);
     }
   };
 
@@ -159,8 +160,9 @@ function App() {
 
         {postStatus && (
           <h2
-            className={`text-md text-blue font-bold  mt-4 ${postStatus.failure ? "text-red-500" : "text-green-500"
-              }`}
+            className={`text-md text-blue font-bold  mt-4 ${
+              postStatus.failure ? "text-red-500" : "text-green-500"
+            }`}
           >
             {postStatus.message}
           </h2>
@@ -185,6 +187,15 @@ function App() {
         >
           Fetch Post
         </button>
+        {getPostStatus && (
+          <h2
+            className={`text-md text-blue font-bold  mt-4 ${
+              getPostStatus.failure ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            {getPostStatus.message}
+          </h2>
+        )}
         {fetchPost && (
           <div className="bg-green-100 rounded-md">
             <h2 className="text-md font-bold text-gray-500 mt-5 p-3">
