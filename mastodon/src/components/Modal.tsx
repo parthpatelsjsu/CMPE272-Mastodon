@@ -9,7 +9,13 @@ interface ModalProps {
 
 // A reusable modal component with translucent backdrop effect
 // Used for confirmation dialogs that require user decision
-export const Modal = ({ isOpen, onClose, onConfirm, title, message }: ModalProps) => {
+export const Modal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+}: ModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -36,4 +42,4 @@ export const Modal = ({ isOpen, onClose, onConfirm, title, message }: ModalProps
       </div>
     </div>
   );
-}; 
+};
