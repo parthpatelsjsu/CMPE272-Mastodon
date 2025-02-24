@@ -30,7 +30,7 @@ function App() {
   const [getPostStatus, setGetPostStatus] = useState<Status>(); // if error during GET, store error here
   const [getDelStatus, setDelPostStatus] = useState<Status>(); // if error during DELETE, store error here
   const [postList, setPostList] = useState<Post[]>([]); // stores ALL posts we created
-  const [fetchPost, setFetchPost] = useState<Post>();
+  const [fetchPost, setFetchPost] = useState<Post | null>();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [pendingDeleteId, setPendingDeleteId] = useState<string>("");
 
@@ -73,7 +73,38 @@ function App() {
 
   // Function to fetch post by ID
   const fetchPostById = async () => {
-    // ***TO BE IMPLEMENTED***
+    // Check if the post ID is empty
+    if (!getPostId.trim()) {
+      setGetPostStatus({ message: "Post ID cannot be empty", failure: true });
+      // setFetchPost({ id: -1, content: "Please enter a valid Post ID", created_at: "" });
+      return;
+    }
+    // Making a GET request to fetch the post by ID
+    const response = await fetch(
+      `${MASTODON_INSTANCE}/api/v1/statuses/${getPostId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${ACCESS_TOKEN}`,
+        },
+      }
+    );
+    const fetchedPost = await response.json();
+
+    // Checking if the API request was successful
+    if (response.ok) {
+      setGetPostStatus({
+        message: `Post fetched successfully!`,
+        failure: false,
+      });
+      setFetchPost(fetchedPost);
+    } else {
+      setGetPostStatus({
+        message: `Get Post by ID failed ${fetchedPost.error}`,
+        failure: true,
+      });
+      setFetchPost(null);
+    }
   };
 
   // Function to delete post by ID
@@ -193,6 +224,15 @@ function App() {
         >
           Fetch Post
         </button>
+        {getPostStatus && (
+          <h2
+            className={`text-md text-blue font-bold  mt-4 ${
+              getPostStatus.failure ? "text-red-500" : "text-green-500"
+            }`}
+          >
+            {getPostStatus.message}
+          </h2>
+        )}
         {fetchPost && (
           <div className="bg-green-100 rounded-md">
             <h2 className="text-md font-bold text-gray-500 mt-5 p-3">
