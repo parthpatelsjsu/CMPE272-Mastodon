@@ -1,3 +1,15 @@
+/*
+TASK/FUNCTION : AUTHOR NAME
+
+UI React elements: Parth Patel
+createPost function: Shailen Sutradhar
+fetchPostById function: Dev Patel
+handleDeleteClick function: Gautam Thampy
+handleConfirmDelete function: Gautam Thampy
+fetchAllPosts function: Parth Patel
+
+*/
+
 import { useEffect, useState } from "react";
 import "./App.css";
 import { Modal } from "./components/Modal";
@@ -39,6 +51,9 @@ function App() {
   }, []);
 
   const createPost = async () => {
+    /*
+    FUNCTION AUTHOR: Shailen Sutradhar
+    */
     if (!postContent.trim()) {
       setPostStatus({ message: "Post content cannot be empty", failure: true });
       return;
@@ -77,6 +92,9 @@ function App() {
 
   // Function to fetch post by ID
   const fetchPostById = async () => {
+    /*
+    FUNCTION AUTHOR: Dev Patel
+    */
     // Check if the post ID is empty
     if (!getPostId.trim()) {
       setGetPostStatus({ message: "Post ID cannot be empty", failure: true });
@@ -113,6 +131,9 @@ function App() {
 
   // Function to delete post by ID
   const handleDeleteClick = () => {
+    /*
+    FUNCTION AUTHOR: Gautam Thampy
+    */
     if (!deletePostId.trim()) {
       setDelPostStatus({ message: "Post ID cannot be empty", failure: true });
       return;
@@ -123,6 +144,9 @@ function App() {
 
   // Handles the actual deletion after user confirmation
   const handleConfirmDelete = async () => {
+    /*
+    FUNCTION AUTHOR: Gautam Thampy
+    */
     const response = await fetch(
       `${MASTODON_INSTANCE}/api/v1/statuses/${pendingDeleteId}`,
       {
@@ -178,6 +202,9 @@ function App() {
     }
   };
 
+  /*
+  UI components author: Parth Patel
+  */
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center p-5">
       <h1 className="text-4xl font-semibold text-center text-purple-700 mb-8">

@@ -1,8 +1,10 @@
+/*
+FILE AUTHOR: Parth Patel
+*/
+
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import App from "./App";
-import { Modal } from "./components/Modal";
-import userEvent from "@testing-library/react";
 import "@testing-library/jest-dom";
 
 describe("App Component", () => {
@@ -66,7 +68,7 @@ describe("App Component", () => {
   });
 
   // TESTS FETCH POST
-  it("fetches posts when the fetch button is clicked", async () => {
+  it("fetches posts using GET operation when the fetch button is clicked", async () => {
     render(<App />);
 
     const fetchButton = screen.getByRole("button", { name: /Fetch Post/i });
@@ -85,7 +87,7 @@ describe("App Component", () => {
   });
 
   // TESTS CREATE POST
-  it("performs the create post operation when the create button is clicked", async () => {
+  it("performs the POST operation when the create button is clicked", async () => {
     const MASTODON_INSTANCE = "https://mstdn.plus"; // Your instance URL
     const newPostContent = "This is a new post."; // Example post content
 
@@ -127,7 +129,7 @@ describe("App Component", () => {
   });
 
   // TEST DELETE POST
-  it("performs the delete operation when confirmed in the modal", async () => {
+  it("performs the DELETE operation when confirmed in the modal", async () => {
     render(<App />);
     const MASTODON_INSTANCE = "https://mstdn.plus"; // Your instance URL
 
