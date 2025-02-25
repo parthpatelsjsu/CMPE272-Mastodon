@@ -11,7 +11,7 @@ describe("App Component", () => {
   beforeEach(() => {
     vi.stubGlobal(
       "fetch",
-      vi.fn((url, options) => {
+      vi.fn((_url, options) => {
         // Check the method used
         if (options.method === "DELETE") {
           return Promise.resolve({

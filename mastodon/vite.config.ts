@@ -20,6 +20,7 @@ const config: UserConfig = {
     environment: 'jsdom', // For testing React components
     globals: true,
   },
+  base: '/CMPE272-Mastodon/',
 };
 
 export default defineConfig(config);
